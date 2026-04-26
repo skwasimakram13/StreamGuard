@@ -11,8 +11,8 @@ permissions:
 
 jobs:
   build-windows:
-    name: Build Windows EXE
-    runs-on: windows-latest
+    name: Build Windows App (flet build windows)
+    runs-on: windows-latest  # Has Visual Studio + C++ tools pre-installed
 
     steps:
       - name: Checkout Code
@@ -24,24 +24,44 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pyinstaller
 
       - name: Read Version
         id: version
+        shell: pwsh
         run: |
           $version = python -c "from version import __version__; print(__version__)"
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
 
-      - name: Build with PyInstaller
-        run: python build.py
-
-      - name: Zip the Build Output
+      - name: Build with flet build windows
+        shell: pwsh
         run: |
-          Compress-Archive -Path dist\StreamGuard\* -DestinationPath StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip
+          $env:PYTHONUTF8 = "1"
+          $env:PYTHONIOENCODING = "utf-8"
+          flet build windows --verbose
+
+      - name: Locate build output
+        id: locate
+        shell: pwsh
+        run: |
+          $buildDir = "build\windows\x64\runner\Release"
+          if (Test-Path $buildDir) {
+            echo "BUILD_DIR=$buildDir" >> $env:GITHUB_OUTPUT
+            echo "Found build at: $buildDir"
+          } else {
+            Get-ChildItem build -Recurse -Filter "*.exe" | Select-Object FullName
+          }
+
+      - name: Zip the Windows Build
+        shell: pwsh
+        run: |
+          $src = "build\windows\x64\runner\Release"
+          $zip = "StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip"
+          Compress-Archive -Path "$src\*" -DestinationPath $zip
+          Write-Host "Created: $zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -49,15 +69,14 @@ jobs:
         with:
           name: StreamGuard v${{ steps.version.outputs.VERSION }}
           body_path: CHANGELOG.md
-          files: |
-            StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip
+          files: StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip
           draft: false
           prerelease: false
 
-      - name: Upload Build Artifact (for manual runs)
+      - name: Upload Build Artifact (manual runs)
         uses: actions/upload-artifact@v4
         if: github.event_name == 'workflow_dispatch'
         with:
           name: StreamGuard-Windows-x64
-          path: dist/StreamGuard/
+          path: build/windows/x64/runner/Release/
           retention-days: 7

@@ -1,59 +1,52 @@
 """
-StreamGuard — PyInstaller Build Script
-Run: python build.py
-Output: dist/StreamGuard/StreamGuard.exe
+StreamGuard — Build Script
+Uses `flet build windows` (the official Flet packaging tool for Flet 0.80+).
+
+Requirements for local builds:
+  1. Visual Studio 2022 (or Build Tools) with "Desktop development with C++" workload
+     Download: https://visualstudio.microsoft.com/downloads/
+  2. All Python dependencies: pip install -r requirements.txt
+
+Usage:
+  python build.py
+
+Output:
+  build/windows/x64/runner/Release/StreamGuard.exe
 """
-import PyInstaller.__main__
-import os
+import subprocess
 import sys
+import os
 from version import __version__
-
-
-def create_dummy_icon():
-    icon_path = "icon.ico"
-    if not os.path.exists(icon_path):
-        import base64
-        ico_data = b"AAABAAEAAQAAAAEAIABoAQAARgAAACgAAAABAAAAAgAAAAEAIAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-        with open(icon_path, "wb") as f:
-            f.write(base64.b64decode(ico_data))
-        print(f"Created dummy {icon_path}")
 
 
 def build_app():
     print(f"Starting StreamGuard v{__version__} Build Process...")
+    print("Using: flet build windows (Flutter-based native Windows build)\n")
 
-    create_dummy_icon()
+    env = os.environ.copy()
+    env["PYTHONUTF8"] = "1"
+    env["PYTHONIOENCODING"] = "utf-8"
 
-    args = [
-        "main.py",
-        f"--name=StreamGuard",
-        "--windowed",          # No console window
-        "--onedir",            # Directory build (faster startup than --onefile)
-        "--icon=icon.ico",
-        "--clean",
-        "--noconfirm",
-        # Flet
-        "--collect-all=flet",
-        # Google API stack
-        "--collect-all=googleapiclient",
-        "--collect-all=google_auth_oauthlib",
-        "--collect-all=google.auth",
-        "--collect-all=google.genai",
-        "--collect-all=httplib2",
-        # Cryptography / keyring
-        "--collect-all=cryptography",
-        "--collect-binaries=keyring",
-        # Hidden imports for dynamic loaders
-        "--hidden-import=config_manager",
-        "--hidden-import=youtube_engine",
-        "--hidden-import=database",
-        "--hidden-import=sentiment",
-        "--hidden-import=version",
-        "--hidden-import=keyring.backends.Windows",
-    ]
+    result = subprocess.run(
+        ["flet", "build", "windows", "--verbose"],
+        env=env,
+        cwd=os.path.dirname(os.path.abspath(__file__)),
+    )
 
-    PyInstaller.__main__.run(args)
-    print(f"\nBuild complete — dist/StreamGuard/StreamGuard.exe  (v{__version__})")
+    if result.returncode == 0:
+        exe_path = os.path.join(
+            "build", "windows", "x64", "runner", "Release", "StreamGuard.exe"
+        )
+        if os.path.exists(exe_path):
+            size_mb = os.path.getsize(exe_path) / (1024 * 1024)
+            print(f"\n✅ Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")
+        else:
+            print("\n✅ Build complete — check the build/windows/ folder.")
+    else:
+        print("\n❌ Build failed.")
+        print("\nCommon fix: Install Visual Studio 2022 with 'Desktop development with C++' workload.")
+        print("Download: https://visualstudio.microsoft.com/downloads/")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
