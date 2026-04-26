@@ -1,0 +1,51 @@
+# ─── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+.Python
+env/
+venv/
+.venv/
+.env
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ─── PyInstaller ─────────────────────────────────────────────────────────────
+*.spec
+!StreamGuard.spec
+InnoSetupOutput/
+
+# ─── CRITICAL: Never commit credentials ──────────────────────────────────────
+client_secret.json
+token.json
+*.enc
+*.p12
+*.pem
+*.key
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+output.log
+logs/
+
+# ─── IDE & OS ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Testing ─────────────────────────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover

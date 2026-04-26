@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "streamguard"
+dynamic = ["version"]
+description = "Professional YouTube Live Stream Moderation & Bot Management Desktop App"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "StreamGuard Tools" }
+]
+keywords = ["youtube", "streaming", "moderation", "live-chat", "bot", "flet"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Chat",
+    "Topic :: Multimedia :: Video",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "flet>=0.24.0",
+    "google-api-python-client>=2.120.0",
+    "google-auth-oauthlib>=1.2.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-genai>=1.0.0",
+    "cryptography>=42.0.0",
+    "keyring>=25.0.0",
+    "tenacity>=8.2.0",
+    "httplib2>=0.22.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/skwasimakram13/StreamGuard"
+"Bug Tracker" = "https://github.com/skwasimakram13/StreamGuard/issues"
+Changelog = "https://github.com/skwasimakram13/StreamGuard/blob/main/CHANGELOG.md"
+Security = "https://github.com/skwasimakram13/StreamGuard/blob/main/SECURITY.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["streamguard*"]
