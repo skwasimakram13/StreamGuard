@@ -27,6 +27,11 @@ def build_app():
     env["PYTHONUTF8"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
 
+    # Auto-add Flutter to PATH if installed at C:\flutter (common location)
+    flutter_bin = r"C:\flutter\bin"
+    if os.path.isdir(flutter_bin) and flutter_bin not in env.get("PATH", ""):
+        env["PATH"] = flutter_bin + os.pathsep + env.get("PATH", "")
+        print(f"Added {flutter_bin} to PATH")
     result = subprocess.run(
         ["flet", "build", "windows", "--verbose"],
         env=env,
