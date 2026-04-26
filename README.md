@@ -12,11 +12,33 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D4?style=for-the-badge&logo=windows)](https://github.com/skwasimakram13/StreamGuard/releases)
 [![Build](https://img.shields.io/github/actions/workflow/status/skwasimakram13/StreamGuard/build.yml?style=for-the-badge)](https://github.com/skwasimakram13/StreamGuard/actions)
 
-> **StreamGuard** is a free, open-source desktop app that gives YouTube Live streamers real-time chat moderation, smart bots, and AI-powered audience insights — all with your own API credentials, stored securely on your machine.
+> **StreamGuard** is a free, open-source Windows desktop app that gives YouTube Live streamers real-time chat moderation, smart bots, and AI-powered audience insights — all with your own API credentials, stored securely on your machine. Zero subscriptions. Zero servers. Your data stays yours.
 
-[⬇️ Download Latest Release](https://github.com/skwasimakram13/StreamGuard/releases/latest) · [🐛 Report a Bug](https://github.com/skwasimakram13/StreamGuard/issues/new?template=bug_report.md) · [💡 Request a Feature](https://github.com/skwasimakram13/StreamGuard/issues/new?template=feature_request.md)
+[⬇️ Download Latest Release](https://github.com/skwasimakram13/StreamGuard/releases/latest) &nbsp;·&nbsp; [🐛 Report a Bug](https://github.com/skwasimakram13/StreamGuard/issues/new?template=bug_report.md) &nbsp;·&nbsp; [💡 Request a Feature](https://github.com/skwasimakram13/StreamGuard/issues/new?template=feature_request.md)
 
 </div>
+
+---
+
+## 📋 Table of Contents
+
+- [✨ Features](#-features)
+- [🔐 Privacy & Security First](#-privacy--security-first)
+- [🚀 Installation (No Coding Required)](#-installation-no-coding-required)
+  - [Step 1 — Download & Install StreamGuard](#step-1--download--install-streamguard)
+  - [Step 2 — Set Up Your Google Cloud Project](#step-2--set-up-your-google-cloud-project)
+  - [Step 3 — Connect StreamGuard to YouTube](#step-3--connect-streamguard-to-youtube)
+- [📖 User Guide](#-user-guide)
+  - [Live Chat Moderation Tab](#live-chat-moderation-tab)
+  - [Bots Tab](#bots-tab)
+  - [Loyalty / Top Chatters Tab](#loyalty--top-chatters-tab)
+- [🔧 Running From Source (Developers)](#-running-from-source-developers)
+- [🏗️ Building the EXE Yourself](#-building-the-exe-yourself)
+- [🗂️ Project Structure](#️-project-structure)
+- [❓ FAQ & Troubleshooting](#-faq--troubleshooting)
+- [🤝 Contributing](#-contributing)
+- [🔒 Security](#-security)
+- [📄 License](#-license)
 
 ---
 
@@ -41,83 +63,196 @@
 StreamGuard uses a **Bring Your Own Key (BYOK)** architecture:
 
 - ✅ All credentials are stored **locally** in `%APPDATA%\StreamGuard\` — **never on any server**
-- ✅ Your `client_secret.json` is **AES-256 encrypted** immediately after import
+- ✅ Your `client_secret.json` is **AES-256 encrypted** immediately after import and the original file is not kept
 - ✅ OAuth tokens are stored encrypted and managed via **Windows Credential Manager**
 - ✅ API calls go **directly** to Google's servers — no proxy, no middleman
-- ✅ The app is fully **open-source** — audit every line yourself
+- ✅ The app is fully **open-source** — audit every line of code yourself
 
 ---
 
-## 🚀 Quick Start (Downloaded EXE)
+## 🚀 Installation (No Coding Required)
 
-1. **Download** `StreamGuard_Setup.exe` from the [Releases page](https://github.com/skwasimakram13/StreamGuard/releases/latest)
-2. **Run the installer** — it installs to `Program Files\StreamGuard` with an optional desktop shortcut
-3. **Set up a Google Cloud Project** (one-time, ~5 minutes):
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project → Enable **YouTube Data API v3**
-   - **Credentials** → **Create Credentials** → **OAuth 2.0 Client ID** → **Desktop app**
-   - Click **Download JSON** to save your `client_secret.json`
-4. **Launch StreamGuard** → click **"Select client_secret.json"** → authorize in your browser
-5. ✅ You're connected! StreamGuard will automatically find your active live stream.
+### Step 1 — Download & Install StreamGuard
+
+1. Go to the [**Releases page**](https://github.com/skwasimakram13/StreamGuard/releases/latest)
+2. Download `StreamGuard_Setup_v2.0.0.exe`
+3. Run the installer — accept the defaults and click **Next** through the wizard
+4. A **StreamGuard** shortcut will appear in your Start Menu (optionally on your Desktop)
+5. Launch **StreamGuard** — you will see the Setup Wizard
+
+> You need to complete **Step 2** before you can use the app. This is a one-time, ~5 minute setup.
+
+---
+
+### Step 2 — Set Up Your Google Cloud Project
+
+StreamGuard connects directly to YouTube's official API using your own Google Cloud credentials. This is required so the app can read your live chat, delete messages, and send bot messages — all on your behalf.
+
+#### 2a. Create a Google Cloud Project
+
+1. Go to [**console.cloud.google.com**](https://console.cloud.google.com/) and sign in with your Google account (the one you stream from)
+2. Click the project dropdown at the top → **New Project**
+3. Give it a name (e.g. `StreamGuard`) → click **Create**
+4. Make sure your new project is selected in the dropdown
+
+#### 2b. Enable the YouTube Data API v3
+
+1. In the left sidebar, go to **APIs & Services** → **Library**
+2. Search for **YouTube Data API v3**
+3. Click it → click **Enable**
+
+#### 2c. Configure the OAuth Consent Screen
+
+1. Go to **APIs & Services** → **OAuth consent screen**
+2. Select **External** → click **Create**
+3. Fill in the required fields:
+   - **App name**: `StreamGuard`
+   - **User support email**: your email
+   - **Developer contact email**: your email
+4. Click **Save and Continue** through the next screens (Scopes and Test Users — you can leave them as defaults)
+5. On the **Test users** page, click **+ Add Users** and add your own Google account email → **Save**
+6. Click **Back to Dashboard**
+
+> ⚠️ Your app will stay in **Testing** mode. This is fine — it's only used by you. You do not need to publish it.
+
+#### 2d. Create Your OAuth Credentials
+
+1. Go to **APIs & Services** → **Credentials**
+2. Click **+ Create Credentials** → **OAuth 2.0 Client ID**
+3. Set **Application type** to **Desktop app**
+4. Name it anything (e.g. `StreamGuard Desktop`) → click **Create**
+5. A dialog will appear — click **Download JSON**
+6. Save this file somewhere you can find it (e.g. your Desktop). It will be named something like `client_secret_XXXX.json`
+
+> ✅ You now have your `client_secret.json`. Keep it safe — don't share it.
+
+---
+
+### Step 3 — Connect StreamGuard to YouTube
+
+1. Launch **StreamGuard**
+2. On the Setup Wizard screen, click **"Select client_secret.json"**
+3. Navigate to and select the JSON file you downloaded in Step 2d
+4. Your browser will open asking you to sign in to Google and grant permission
+5. Sign in with the **same account you stream from** → click **Allow**
+6. Return to StreamGuard — you will see the dashboard
+
+> ✅ **You're connected!** StreamGuard will automatically detect your active live stream when you go live.
+
+> 🔒 After this, StreamGuard encrypts and stores your credentials locally. You will not need to do this again unless you log out.
+
+---
+
+## 📖 User Guide
+
+### Live Chat Moderation Tab
+
+This is your main command center when you're live.
+
+- **Live Chat Feed** (left panel) — Real-time messages appear here. Each card shows the author name and message. Click the 🗑️ (delete) icon on any card to manually remove a message from YouTube chat.
+- **Highlights** (middle panel) — Superchats, new memberships, and milestone messages are automatically pulled out and displayed here with a gold border so you never miss them.
+- **Moderation Controls** (right panel):
+  - **Master Switch** — Turns all chat reading and bot activity on/off
+  - **Enable Auto-Mod** — When on, any message containing a banned word is automatically deleted from YouTube chat in real-time
+  - **Polling Frequency** — How often (in seconds) StreamGuard checks for new messages. Lower = more responsive, but uses more API quota.
+  - **Banned List Manager** — Enter words separated by commas. Click **Update List** to save.
+
+---
+
+### Bots Tab
+
+#### ⏰ Alerts Bot
+Sends scheduled messages to your chat automatically (great for promos, social links, Discord invites).
+
+1. Toggle **Enable Alerts Bot** on
+2. Set the **Interval** — how many minutes between each message
+3. Enter your messages, one per line (StreamGuard cycles through them in order)
+4. Click **Save Messages**
+
+#### 📣 Engagement Bot
+Same as Alerts Bot, but specifically for like/subscribe/follow reminders.
+
+#### ⚡ Custom Commands Bot
+Let your chat trigger instant responses with `!commands`.
+
+1. Toggle **Enable Commands Bot** on
+2. Enter commands in the format: `!command | Your response text`  
+   Example: `!discord | Join us at https://discord.gg/yourlink`
+3. One command per line → click **Save Commands**
+
+When a viewer types `!discord`, StreamGuard automatically replies with the configured response.
+
+#### 🧠 AI Vibe Meter
+Uses Google's Gemini AI to analyze the mood of your chat every 15 seconds and shows you one emoji:
+
+| Emoji | Meaning |
+|-------|---------|
+| 🔥 | Chat is hyped / excited |
+| 💖 | Positive / happy vibes |
+| 😡 | Angry / negative |
+| ❓ | Confused |
+| 💬 | Neutral / mixed |
+
+**To enable:**
+1. Get a free API key from [**Google AI Studio**](https://aistudio.google.com/app/apikey) (free, no credit card needed)
+2. Paste the key in the **Gemini API Key** field → click **Save Key**
+
+---
+
+### Loyalty / Top Chatters Tab
+
+StreamGuard tracks every viewer who chats and records their message count in a local database.
+
+- Click **Refresh** to load the leaderboard (top 50 by message count)
+- Toggle the **VIP** switch on any viewer to mark them as a VIP
+
+> 💡 VIP status is stored locally and persists across streams. Great for recognizing your most loyal regulars.
 
 ---
 
 ## 🔧 Running From Source (Developers)
 
+If you want to run StreamGuard directly from Python instead of using the installer:
+
 ### Prerequisites
 
-- Python 3.11 or higher
-- Windows 10 / 11
+- **Python 3.11 or higher** — [Download here](https://www.python.org/downloads/)  
+  *(Check your version: `python --version`)*
+- **Windows 10 or 11**
+- A Google Cloud OAuth `client_secret.json` (see [Step 2](#step-2--set-up-your-google-cloud-project) above)
 
 ### Setup
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/skwasimakram13/StreamGuard.git
 cd StreamGuard
 
-# Create a virtual environment (recommended)
+# 2. Create a virtual environment (strongly recommended)
 python -m venv .venv
 .venv\Scripts\activate
 
-# Install all dependencies
+# 3. Install all dependencies
 pip install -r requirements.txt
 
-# Run the app
+# 4. Run the app
 python main.py
-```
-
-### Build the Windows EXE Yourself
-
-```bash
-# Make sure you have the venv active and requirements installed
-python build.py
-
-# Output will be in: dist\StreamGuard\StreamGuard.exe
-```
-
-To create an installer (requires [Inno Setup](https://jrsoftware.org/isinfo.php)):
-```
-Run installer.iss in Inno Setup Compiler
-Output: InnoSetupOutput\StreamGuard_Setup.exe
 ```
 
 ---
 
-## 📋 Requirements
+## 🏗️ Building the EXE Yourself
 
-All Python dependencies are in `requirements.txt`. The key ones:
+```bash
+# Make sure your venv is active and requirements are installed
+python build.py
 
-| Package | Purpose |
-|---|---|
-| `flet` | Cross-platform UI framework |
-| `google-api-python-client` | YouTube Data API v3 |
-| `google-auth-oauthlib` | OAuth 2.0 authentication flow |
-| `google-genai` | Gemini AI for Vibe Meter |
-| `cryptography` | AES-256 encryption of credentials |
-| `keyring` | Windows Credential Manager integration |
-| `tenacity` | Exponential backoff on API retries |
-| `httplib2` | HTTP transport layer |
+# Output: dist\StreamGuard\StreamGuard.exe
+```
+
+To create a Windows installer (requires [Inno Setup](https://jrsoftware.org/isinfo.php)):
+1. Open `installer.iss` in **Inno Setup Compiler**
+2. Click **Build** → output: `InnoSetupOutput\StreamGuard_Setup_v2.0.0.exe`
 
 ---
 
@@ -137,11 +272,9 @@ StreamGuard/
 ├── requirements.txt     # Python dependencies (pinned minimum versions)
 ├── pyproject.toml       # Modern Python packaging metadata
 ├── .github/
-│   ├── workflows/
-│   │   └── build.yml           # GitHub Actions: auto-build & release EXE
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
+│   ├── workflows/build.yml          # GitHub Actions: auto-build & release EXE on tag push
+│   ├── ISSUE_TEMPLATE/bug_report.md
+│   ├── ISSUE_TEMPLATE/feature_request.md
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
@@ -151,46 +284,41 @@ StreamGuard/
 
 ---
 
-## 📖 User Guide
+## ❓ FAQ & Troubleshooting
 
-### Setting Up Bots
+**Q: The app says "No active live stream found." but I'm live.**  
+A: Make sure you are live on the **same YouTube account** you authenticated with. Premieres and scheduled streams don't count — you need to be actively streaming.
 
-Go to the **Bots** tab:
+**Q: I get a "This app isn't verified" screen from Google.**  
+A: This is normal because your Cloud project is in Testing mode. Click **"Continue"** → **"Allow"**. This screen only appears during the initial login.
 
-- **Alerts Bot** — Enable it and set an interval (minutes). Enter one message per line. StreamGuard will cycle through them automatically during your stream.
-- **Engagement Bot** — Same concept, but for like/subscribe reminders.
-- **Custom Commands** — Format: `!command | Your response text`. Enable the bot and viewers can trigger replies by typing the command in chat.
+**Q: The bot sends messages but they don't appear in my chat.**  
+A: Your Google Cloud project's OAuth scope needs `youtube.force-ssl`. This is automatically requested by StreamGuard. If bots still don't send, try logging out and re-authenticating.
 
-### AI Vibe Meter
+**Q: How do I reset / start fresh?**  
+A: Click **Logout** in the top-right corner. This clears your encrypted credentials. You can then import a new `client_secret.json`.
 
-1. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. In the **Bots** tab, paste your key in the **AI Vibe Meter** section and click **Save Key**
-3. StreamGuard analyzes your chat every 15 seconds and shows the vibe emoji: 🔥 💖 😡 ❓ 💬
+**Q: Where are my credentials stored?**  
+A: All data is in `%APPDATA%\StreamGuard\` on your PC. Credentials are AES-256 encrypted. Logs are in `%APPDATA%\StreamGuard\system.log`.
 
-### Auto-Moderation
+**Q: I hit the YouTube API quota limit.**  
+A: YouTube's free tier allows ~10,000 units/day. StreamGuard shows "API Quota Exceeded" in the status bar when this happens. It resets at midnight Pacific Time. Increase the polling frequency slider to reduce API usage.
 
-In the **Moderation** tab:
-- Toggle **Auto-Mod** on
-- Add banned words (comma-separated) in the Banned List Manager
-- Click **Update List** — StreamGuard will now auto-delete any matching messages in real-time
-
-### VIP Viewers
-
-In the **Loyalty** tab, hit **Refresh** to see your top chatters ranked by message count. Toggle the **VIP** switch next to any viewer to mark them.
+**Q: Does StreamGuard work with Twitch or other platforms?**  
+A: Currently, StreamGuard only supports YouTube Live. Twitch/Kick support may be considered in future releases — please open a Feature Request.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for code style, commit format, and the PR workflow.
 
 ```bash
-# Quick contribution flow
 git checkout -b feat/my-feature
 # make your changes
-git commit -m "feat: add my feature"
+git commit -m "feat: describe your change"
 git push origin feat/my-feature
-# Open a Pull Request
+# Open a Pull Request on GitHub
 ```
 
 ---
