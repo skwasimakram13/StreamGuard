@@ -8,3 +8,4 @@ cryptography>=42.0.0
 keyring>=25.0.0
 tenacity>=8.2.0
 httplib2>=0.22.0
+pyinstaller>=6.0.0
