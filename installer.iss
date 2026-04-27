@@ -23,9 +23,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Run `python build.py` first to generate the build\windows\x64\runner\Release directory.
-; Requires: Flutter at C:\flutter + Visual Studio 2022 with 'Desktop development with C++' workload.
-Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Run `python build.py` first to generate the dist\StreamGuard directory.
+Source: "dist\StreamGuard\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

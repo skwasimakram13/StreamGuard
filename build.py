@@ -1,58 +1,49 @@
 """
 StreamGuard — Build Script
-Uses `flet build windows` (the official Flet packaging tool for Flet 0.80+).
-
-Requirements for local builds:
-  1. Visual Studio 2022 (or Build Tools) with "Desktop development with C++" workload
-     Download: https://visualstudio.microsoft.com/downloads/
-  2. All Python dependencies: pip install -r requirements.txt
+Uses `flet pack` to package the app into a standalone executable.
+No Visual Studio or Flutter installation is required!
 
 Usage:
   python build.py
 
 Output:
-  build/windows/x64/runner/Release/StreamGuard.exe
+  dist/StreamGuard/StreamGuard.exe
 """
 import subprocess
 import sys
 import os
 from version import __version__
 
-
 def build_app():
     print(f"Starting StreamGuard v{__version__} Build Process...")
-    print("Using: flet build windows (Flutter-based native Windows build)\n")
+    print("Using: flet pack (PyInstaller wrapper)\n")
 
-    env = os.environ.copy()
-    env["PYTHONUTF8"] = "1"
-    env["PYTHONIOENCODING"] = "utf-8"
+    cmd = [
+        sys.executable, "-m", "flet", "pack", "main.py",
+        "--name", "StreamGuard",
+        "--icon", "icon.ico",
+        "--hidden-import", "config_manager",
+        "--hidden-import", "youtube_engine",
+        "--hidden-import", "database",
+        "--hidden-import", "sentiment",
+        "--hidden-import", "version",
+        "--hidden-import", "keyring.backends.Windows",
+        "--hidden-import", "google.genai",
+        "--hidden-import", "cryptography",
+    ]
 
-    # Auto-add Flutter to PATH if installed at C:\flutter (common location)
-    flutter_bin = r"C:\flutter\bin"
-    if os.path.isdir(flutter_bin) and flutter_bin not in env.get("PATH", ""):
-        env["PATH"] = flutter_bin + os.pathsep + env.get("PATH", "")
-        print(f"Added {flutter_bin} to PATH")
-    result = subprocess.run(
-        ["flet", "build", "windows", "--verbose"],
-        env=env,
-        cwd=os.path.dirname(os.path.abspath(__file__)),
-    )
+    result = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(__file__)))
 
     if result.returncode == 0:
-        exe_path = os.path.join(
-            "build", "windows", "x64", "runner", "Release", "StreamGuard.exe"
-        )
+        exe_path = os.path.join("dist", "StreamGuard", "StreamGuard.exe")
         if os.path.exists(exe_path):
             size_mb = os.path.getsize(exe_path) / (1024 * 1024)
             print(f"\n✅ Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")
         else:
-            print("\n✅ Build complete — check the build/windows/ folder.")
+            print("\n✅ Build complete — check the dist/ folder.")
     else:
         print("\n❌ Build failed.")
-        print("\nCommon fix: Install Visual Studio 2022 with 'Desktop development with C++' workload.")
-        print("Download: https://visualstudio.microsoft.com/downloads/")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     build_app()
