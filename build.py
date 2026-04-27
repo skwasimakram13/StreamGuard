@@ -19,7 +19,7 @@ def build_app():
     print("Using: flet pack (PyInstaller wrapper)\n")
 
     cmd = [
-        sys.executable, "-m", "flet", "pack", "main.py",
+        "flet", "pack", "main.py",
         "--name", "StreamGuard",
         "--icon", "icon.ico",
         "--hidden-import", "config_manager",
@@ -38,11 +38,11 @@ def build_app():
         exe_path = os.path.join("dist", "StreamGuard.exe")
         if os.path.exists(exe_path):
             size_mb = os.path.getsize(exe_path) / (1024 * 1024)
-            print(f"\n✅ Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")
+            print(f"\n[SUCCESS] Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")
         else:
-            print("\n✅ Build complete — check the dist/ folder.")
+            print("\n[SUCCESS] Build complete — check the dist/ folder.")
     else:
-        print("\n❌ Build failed.")
+        print("\n[ERROR] Build failed.")
         sys.exit(1)
 
 if __name__ == "__main__":
