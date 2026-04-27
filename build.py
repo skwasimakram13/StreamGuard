@@ -35,7 +35,7 @@ def build_app():
     result = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(__file__)))
 
     if result.returncode == 0:
-        exe_path = os.path.join("dist", "StreamGuard", "StreamGuard.exe")
+        exe_path = os.path.join("dist", "StreamGuard.exe")
         if os.path.exists(exe_path):
             size_mb = os.path.getsize(exe_path) / (1024 * 1024)
             print(f"\n✅ Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")

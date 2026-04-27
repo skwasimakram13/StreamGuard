@@ -49,10 +49,10 @@ jobs:
         id: locate
         shell: pwsh
         run: |
-          $buildDir = "dist\StreamGuard"
-          if (Test-Path $buildDir) {
+          $buildDir = "dist"
+          if (Test-Path "$buildDir\StreamGuard.exe") {
             echo "BUILD_DIR=$buildDir" >> $env:GITHUB_OUTPUT
-            echo "Found build at: $buildDir"
+            echo "Found build at: $buildDir\StreamGuard.exe"
           } else {
             Get-ChildItem dist -Recurse -Filter "*.exe" | Select-Object FullName
           }
@@ -60,9 +60,9 @@ jobs:
       - name: Zip the Windows Build
         shell: pwsh
         run: |
-          $src = "dist\StreamGuard"
+          $src = "dist\StreamGuard.exe"
           $zip = "StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip"
-          Compress-Archive -Path "$src\*" -DestinationPath $zip
+          Compress-Archive -Path $src -DestinationPath $zip
           Write-Host "Created: $zip"
 
       - name: Create GitHub Release
@@ -80,5 +80,5 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         with:
           name: StreamGuard-Windows-x64
-          path: dist/StreamGuard/
+          path: dist/StreamGuard.exe
           retention-days: 7

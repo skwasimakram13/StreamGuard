@@ -23,8 +23,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Run `python build.py` first to generate the dist\StreamGuard directory.
-Source: "dist\StreamGuard\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Run `python build.py` first to generate the dist\StreamGuard.exe file.
+Source: "dist\StreamGuard.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
