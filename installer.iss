@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=StreamGuard
-AppVersion=2.1.1
+AppVersion=2.1.2
 AppPublisher=StreamGuard Tools
 AppPublisherURL=https://github.com/skwasimakram13/StreamGuard
 AppSupportURL=https://github.com/skwasimakram13/StreamGuard/issues
@@ -12,7 +12,7 @@ AppUpdatesURL=https://github.com/skwasimakram13/StreamGuard/releases
 DefaultDirName={autopf}\StreamGuard
 DefaultGroupName=StreamGuard
 OutputDir=.\InnoSetupOutput
-OutputBaseFilename=StreamGuard_Setup_v2.1.1
+OutputBaseFilename=StreamGuard_Setup_v2.1.2
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -60,14 +60,26 @@ end;
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   AppDataDir: String;
+  FletCacheDir: String;
 begin
   if CurUninstallStep = usPostUninstall then
   begin
     if DeleteConfigData then
     begin
+      // Remove config_manager.py data directory: %APPDATA%\StreamGuard\
       AppDataDir := ExpandConstant('{userappdata}\StreamGuard');
       if DirExists(AppDataDir) then
         DelTree(AppDataDir, True, True, True);
+
+      // Remove Flet/Flutter runtime cache directory: %APPDATA%\StreamGuard Tools\StreamGuard\
+      FletCacheDir := ExpandConstant('{userappdata}\StreamGuard Tools\StreamGuard');
+      if DirExists(FletCacheDir) then
+        DelTree(FletCacheDir, True, True, True);
+
+      // Remove parent company folder if it is now empty
+      FletCacheDir := ExpandConstant('{userappdata}\StreamGuard Tools');
+      if DirExists(FletCacheDir) then
+        RemoveDir(FletCacheDir);
     end;
   end;
 end;

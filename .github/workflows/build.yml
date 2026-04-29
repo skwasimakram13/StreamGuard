@@ -47,6 +47,7 @@ jobs:
             --project StreamGuard `
             --product StreamGuard `
             --org com.streamguard `
+            --company "StreamGuard Tools" `
             --build-version $version `
             --yes
           if ($LASTEXITCODE -ne 0) {

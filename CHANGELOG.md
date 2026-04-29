@@ -13,6 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.2] - 2026-04-29
+
+### Fixed
+- **AppData folder named "Your Company"**: `flet build windows` was missing the `--company` flag, causing Flutter's `path_provider` to default the AppData path to `%APPDATA%\Your Company\StreamGuard\`. Added `--company "StreamGuard Tools"` to the build command in `build.yml` so the Flet runtime now stores its cache at `%APPDATA%\StreamGuard Tools\StreamGuard\`.
+- **Uninstaller leaves orphaned Flet cache folder**: The `[Code]` section of `installer.iss` previously only deleted `%APPDATA%\StreamGuard\` (the `config_manager.py` data path). It now also deletes `%APPDATA%\StreamGuard Tools\StreamGuard\` (the Flet/Flutter runtime cache) and removes the parent `StreamGuard Tools` folder if it is empty.
+
+### Changed
+- `.github/workflows/build.yml`: Added `--company "StreamGuard Tools"` to the `flet build windows` command
+- `installer.iss`: `AppVersion` → `2.1.2`; `OutputBaseFilename` → `StreamGuard_Setup_v2.1.2`; uninstaller now cleans both AppData directories
+- `version.py`: `__version__` → `2.1.2`; `__version_info__` → `(2, 1, 2)`
+
+---
+
 ## [2.1.1] - 2026-04-29
 
 ### Fixed
@@ -146,7 +159,8 @@ First public release of StreamGuard — a free, privacy-first YouTube Live moder
 
 ---
 
-[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.3...v2.0.4
