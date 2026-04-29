@@ -81,7 +81,7 @@ jobs:
       - name: Compile Inno Setup Installer
         shell: pwsh
         run: |
-          iscc installer.iss
+          iscc /DReleaseDir="$env:RELEASE_DIR" installer.iss
           if ($LASTEXITCODE -ne 0) {
             Write-Host "InnoSetup compilation failed!"
             exit 1
