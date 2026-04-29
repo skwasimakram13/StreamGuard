@@ -19,28 +19,21 @@ def build_app():
     print("Using: flet pack (PyInstaller wrapper)\n")
 
     cmd = [
-        "flet", "pack", "main.py",
-        "--name", "StreamGuard",
-        "--icon", "icon.ico",
-        "--hidden-import", "config_manager",
-        "--hidden-import", "youtube_engine",
-        "--hidden-import", "database",
-        "--hidden-import", "sentiment",
-        "--hidden-import", "version",
-        "--hidden-import", "keyring.backends.Windows",
-        "--hidden-import", "google.genai",
-        "--hidden-import", "cryptography",
+        "flet", "build", "windows",
+        "--project", "StreamGuard",
+        "--product", "StreamGuard",
+        "--org", "com.streamguard",
+        "--build-version", __version__,
     ]
 
     result = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(__file__)))
 
     if result.returncode == 0:
-        exe_path = os.path.join("dist", "StreamGuard.exe")
-        if os.path.exists(exe_path):
-            size_mb = os.path.getsize(exe_path) / (1024 * 1024)
-            print(f"\n[SUCCESS] Build complete — {exe_path}  ({size_mb:.1f} MB)  v{__version__}")
+        exe_dir = os.path.join("build", "windows")
+        if os.path.exists(exe_dir):
+            print(f"\n[SUCCESS] Build complete — check the {exe_dir} folder. v{__version__}")
         else:
-            print("\n[SUCCESS] Build complete — check the dist/ folder.")
+            print("\n[SUCCESS] Build complete.")
     else:
         print("\n[ERROR] Build failed.")
         sys.exit(1)

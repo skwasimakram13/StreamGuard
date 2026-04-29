@@ -23,14 +23,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Run `python build.py` first to generate the dist\StreamGuard.exe file.
-Source: "dist\StreamGuard.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
+; flet build windows outputs a directory containing the exe and dependencies
+Source: "build\windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\StreamGuard"; Filename: "{app}\StreamGuard.exe"; IconFilename: "{app}\icon.ico"
+Name: "{group}\StreamGuard"; Filename: "{app}\StreamGuard.exe"
 Name: "{group}\Uninstall StreamGuard"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\StreamGuard"; Filename: "{app}\StreamGuard.exe"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
+Name: "{autodesktop}\StreamGuard"; Filename: "{app}\StreamGuard.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\StreamGuard.exe"; Description: "{cm:LaunchProgram,StreamGuard}"; Flags: nowait postinstall skipifsilent

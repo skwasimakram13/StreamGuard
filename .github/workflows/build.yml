@@ -36,7 +36,7 @@ jobs:
           $version = python -c "from version import __version__; print(__version__)"
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
 
-      - name: Build with flet pack
+      - name: Build Windows App (Native Flet)
         shell: pwsh
         run: |
           python build.py
@@ -45,25 +45,14 @@ jobs:
             exit 1
           }
 
-      - name: Locate build output
-        id: locate
+      - name: Compile Inno Setup Installer
         shell: pwsh
         run: |
-          $buildDir = "dist"
-          if (Test-Path "$buildDir\StreamGuard.exe") {
-            echo "BUILD_DIR=$buildDir" >> $env:GITHUB_OUTPUT
-            echo "Found build at: $buildDir\StreamGuard.exe"
-          } else {
-            Get-ChildItem dist -Recurse -Filter "*.exe" | Select-Object FullName
+          iscc installer.iss
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "InnoSetup compilation failed!"
+            exit 1
           }
-
-      - name: Zip the Windows Build
-        shell: pwsh
-        run: |
-          $src = "dist\StreamGuard.exe"
-          $zip = "StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip"
-          Compress-Archive -Path $src -DestinationPath $zip
-          Write-Host "Created: $zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -71,14 +60,14 @@ jobs:
         with:
           name: StreamGuard v${{ steps.version.outputs.VERSION }}
           body_path: CHANGELOG.md
-          files: StreamGuard-v${{ steps.version.outputs.VERSION }}-Windows-x64.zip
+          files: InnoSetupOutput/StreamGuard_Setup_*.exe
           draft: false
           prerelease: false
 
-      - name: Upload Build Artifact (manual runs)
+      - name: Upload Installer Artifact (manual runs)
         uses: actions/upload-artifact@v4
         if: github.event_name == 'workflow_dispatch'
         with:
-          name: StreamGuard-Windows-x64
-          path: dist/StreamGuard.exe
+          name: StreamGuard-Windows-Installer
+          path: InnoSetupOutput/StreamGuard_Setup_*.exe
           retention-days: 7
