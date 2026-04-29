@@ -1,5 +1,6 @@
 import flet as ft
 import asyncio
+import subprocess
 
 from flet.controls.material.icons import Icons
 from config_manager import ConfigManager
@@ -7,7 +8,6 @@ from youtube_engine import YouTubeEngine
 from database import DatabaseManager
 from sentiment import SentimentEngine
 from version import __version__
-import traceback
 import logging
 
 logger = logging.getLogger(__name__)
@@ -100,16 +100,40 @@ async def main(page: ft.Page):
 
     yt_engine.on_status_change = update_status_ui
 
-    # ─── Native File Dialog (Flet) ───────────────────────────────────────────
-    file_picker = ft.FilePicker()
-    page.overlay.append(file_picker)
-    page.update()
+    # ─── Native File Dialog (Windows PowerShell) ─────────────────────────────
+    # ft.FilePicker is NOT used here — it is unsupported in flet build windows
+    # (throws "Unknown control: FilePicker"). Instead we call PowerShell's
+    # System.Windows.Forms.OpenFileDialog directly from a thread executor.
 
-    async def on_dialog_result(e):
-        if not e.files:
-            return
-        file_path = e.files[0].path
+    def _open_file_dialog_sync() -> str:
+        """Spawn a native Windows OpenFileDialog via PowerShell. Returns the
+        selected file path, or an empty string if the user cancelled."""
+        ps_script = (
+            "Add-Type -AssemblyName System.Windows.Forms; "
+            "$dlg = New-Object System.Windows.Forms.OpenFileDialog; "
+            "$dlg.Title = 'Select your client_secret.json'; "
+            "$dlg.Filter = 'JSON Files (*.json)|*.json|All Files (*.*)|*.*'; "
+            "$dlg.FilterIndex = 1; "
+            "$dlg.Multiselect = $false; "
+            "if ($dlg.ShowDialog() -eq 'OK') { Write-Output $dlg.FileName }"
+        )
+        try:
+            result = subprocess.run(
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps_script],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            return result.stdout.strip()
+        except Exception as exc:
+            logger.error("File dialog subprocess failed: %s", exc)
+            return ""
+
+    async def handle_pick_secret(_):
         loop = asyncio.get_running_loop()
+        file_path = await loop.run_in_executor(None, _open_file_dialog_sync)
+        if not file_path:
+            return  # User cancelled
         success = await loop.run_in_executor(
             None, yt_engine.authenticate_new_user, file_path
         )
@@ -117,17 +141,7 @@ async def main(page: ft.Page):
             show_toast("Successfully authenticated! 🎉")
             await show_dashboard()
         else:
-            show_toast("Authentication failed.", is_error=True)
-
-    file_picker.on_result = on_dialog_result
-
-    async def handle_pick_secret(_):
-        file_picker.pick_files(
-            dialog_title="Select client_secret.json",
-            file_type=ft.FilePickerFileType.CUSTOM,
-            allowed_extensions=["json"],
-            allow_multiple=False,
-        )
+            show_toast("Authentication failed. Check your client_secret.json.", is_error=True)
 
     # ─── Setup Wizard View ───────────────────────────────────────────────────
     setup_view = ft.Column(

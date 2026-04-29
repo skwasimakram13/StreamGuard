@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.3] - 2026-04-29
+
+### Fixed
+- **"Unknown control: FilePicker" — permanent fix**: Previous workarounds (`file_type=ft.FilePickerFileType.CUSTOM`) were insufficient. Root cause: `ft.FilePicker` relies on the Flutter `file_picker` plugin which is **not bundled** by `flet build windows`. Removed `ft.FilePicker` entirely from `main.py`. Replaced with a native Windows `OpenFileDialog` launched via a PowerShell subprocess (`System.Windows.Forms.OpenFileDialog`). This approach has **zero Flutter dependency** and works correctly in the native compiled build.
+
+### Changed
+- `main.py`: Removed `ft.FilePicker`, `page.overlay.append(file_picker)`, and `on_dialog_result`. Added `subprocess` import and `_open_file_dialog_sync()` helper that spawns a PowerShell one-liner to show a native Windows file open dialog.
+- `version.py`: `__version__` → `2.1.3`; `__version_info__` → `(2, 1, 3)`
+- `installer.iss`: `AppVersion` → `2.1.3`; `OutputBaseFilename` → `StreamGuard_Setup_v2.1.3`
+
+---
+
 ## [2.1.2] - 2026-04-29
 
 ### Fixed
@@ -159,7 +171,8 @@ First public release of StreamGuard — a free, privacy-first YouTube Live moder
 
 ---
 
-[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.2...HEAD
+[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.3...HEAD
+[2.1.3]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.4...v2.1.0
