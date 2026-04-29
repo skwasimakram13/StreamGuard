@@ -1,7 +1,6 @@
 import flet as ft
 import asyncio
-import tkinter as tk
-from tkinter import filedialog
+
 from flet.controls.material.icons import Icons
 from config_manager import ConfigManager
 from youtube_engine import YouTubeEngine
@@ -101,22 +100,14 @@ async def main(page: ft.Page):
 
     yt_engine.on_status_change = update_status_ui
 
-    # ─── Native File Dialog (tkinter) ────────────────────────────────────────
-    def _open_file_dialog_sync() -> str:
-        root = tk.Tk()
-        root.withdraw()
-        root.attributes("-topmost", True)
-        path = filedialog.askopenfilename(
-            title="Select client_secret.json",
-            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-        )
-        root.destroy()
-        return path
+    # ─── Native File Dialog (Flet) ───────────────────────────────────────────
+    file_picker = ft.FilePicker()
+    page.overlay.append(file_picker)
 
-    async def handle_pick_secret(_):
-        file_path = _open_file_dialog_sync()
-        if not file_path:
+    async def on_dialog_result(e: ft.FilePickerResultEvent):
+        if not e.files:
             return
+        file_path = e.files[0].path
         loop = asyncio.get_running_loop()
         success = await loop.run_in_executor(
             None, yt_engine.authenticate_new_user, file_path
@@ -126,6 +117,15 @@ async def main(page: ft.Page):
             await show_dashboard()
         else:
             show_toast("Authentication failed.", is_error=True)
+
+    file_picker.on_result = on_dialog_result
+
+    async def handle_pick_secret(_):
+        file_picker.pick_files(
+            dialog_title="Select client_secret.json",
+            allowed_extensions=["json"],
+            allow_multiple=False
+        )
 
     # ─── Setup Wizard View ───────────────────────────────────────────────────
     setup_view = ft.Column(
