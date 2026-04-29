@@ -24,6 +24,7 @@ def build_app():
         "--product", "StreamGuard",
         "--org", "com.streamguard",
         "--build-version", __version__,
+        "--yes",
     ]
 
     result = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(__file__)))
