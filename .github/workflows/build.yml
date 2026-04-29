@@ -52,9 +52,9 @@ jobs:
         run: |
           Write-Host "=== Build output structure ==="
           Get-ChildItem -Path "build" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object FullName
-          $exePath = Get-ChildItem -Path "build\flutter\windows" -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          $exePath = Get-ChildItem -Path "build\windows\runner\Release" -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
           if (-not $exePath) {
-            Write-Error "No .exe found in build\flutter\windows — aborting."
+            Write-Error "No .exe found in build\windows\runner\Release — aborting."
             exit 1
           }
           Write-Host "Found exe: $($exePath.FullName)"

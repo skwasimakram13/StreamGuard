@@ -30,7 +30,7 @@ def build_app():
     result = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(__file__)))
 
     if result.returncode == 0:
-        exe_dir = os.path.join("build", "flutter", "windows")
+        exe_dir = os.path.join("build", "windows", "runner", "Release")
         if os.path.exists(exe_dir):
             print(f"\n[SUCCESS] Build complete — check the {exe_dir} folder. v{__version__}")
         else:
