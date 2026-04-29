@@ -1,6 +1,6 @@
 [Setup]
 AppName=StreamGuard
-AppVersion=2.0.2
+AppVersion=2.0.3
 AppPublisher=StreamGuard Tools
 AppPublisherURL=https://github.com/skwasimakram13/StreamGuard
 AppSupportURL=https://github.com/skwasimakram13/StreamGuard/issues
@@ -8,7 +8,7 @@ AppUpdatesURL=https://github.com/skwasimakram13/StreamGuard/releases
 DefaultDirName={autopf}\StreamGuard
 DefaultGroupName=StreamGuard
 OutputDir=.\InnoSetupOutput
-OutputBaseFilename=StreamGuard_Setup_v2.0.2
+OutputBaseFilename=StreamGuard_Setup_v2.0.3
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,20 +36,16 @@ Filename: "{app}\StreamGuard.exe"; Description: "{cm:LaunchProgram,StreamGuard}"
 
 [Code]
 var
-  KeepConfigPage: TInputOptionWizardPage;
+  DeleteConfigData: Boolean;
 
-procedure InitializeUninstallProgressForm();
+function InitializeUninstall(): Boolean;
 begin
-  KeepConfigPage := CreateInputOptionPage(wpWelcome,
-    'Configuration Data', 'Do you want to keep your configuration data?',
-    'StreamGuard stores encrypted tokens and settings in your AppData directory. ' +
-    'If you are reinstalling, keeping data means you will not need to re-authenticate.',
-    True, False);
-
-  KeepConfigPage.Add('Keep my configuration data (Recommended if reinstalling)');
-  KeepConfigPage.Add('Delete all configuration data (Clean uninstall)');
-
-  KeepConfigPage.Values[0] := True;
+  if MsgBox('Do you want to completely delete your configuration data (encrypted tokens and settings)?' + #13#10#13#10 + 'Choose No if you plan to reinstall StreamGuard later.', mbConfirmation, MB_YESNO) = idYes then
+    DeleteConfigData := True
+  else
+    DeleteConfigData := False;
+    
+  Result := True;
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
@@ -58,7 +54,7 @@ var
 begin
   if CurUninstallStep = usPostUninstall then
   begin
-    if KeepConfigPage.Values[1] = True then
+    if DeleteConfigData then
     begin
       AppDataDir := ExpandConstant('{userappdata}\StreamGuard');
       if DirExists(AppDataDir) then
