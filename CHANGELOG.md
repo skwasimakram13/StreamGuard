@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.1] - 2026-04-29
+
+### Fixed
+- **"Unknown control: FilePicker" crash on launch**: `pick_files()` was called without `file_type=ft.FilePickerFileType.CUSTOM`, which caused Flet's native Windows build to fail to resolve the file picker control. Added the required `file_type` argument to the `handle_pick_secret` function.
+- **Installer skips directory selection page**: Added `DisableDirPage=no`, `DisableProgramGroupPage=no`, and `DisableWelcomePage=no` to `installer.iss` so the wizard always shows the "Choose Install Location" and "Start Menu" pages, allowing users to install to any drive/folder they choose.
+- **Installer shows License**: Added `LicenseFile=LICENSE` to display the MIT license in the installer wizard before installation.
+- **Deprecated `asyncio.get_event_loop()` in async functions**: Two remaining calls in `alerts_bot_loop()` and `engagement_bot_loop()` in `main.py` replaced with `asyncio.get_running_loop()` (required for Python 3.10+).
+
+### Changed
+- `version.py`: `__version__` → `2.1.1`; `__version_info__` → `(2, 1, 1)`
+- `installer.iss`: `AppVersion` → `2.1.1`; `OutputBaseFilename` → `StreamGuard_Setup_v2.1.1`
+
+---
+
 ## [2.1.0] - 2026-04-29
 
 ### 📚 Documentation & Community Overhaul
@@ -132,7 +146,8 @@ First public release of StreamGuard — a free, privacy-first YouTube Live moder
 
 ---
 
-[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/skwasimakram13/StreamGuard/compare/v2.0.0...v2.0.3

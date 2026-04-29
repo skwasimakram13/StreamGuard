@@ -124,8 +124,9 @@ async def main(page: ft.Page):
     async def handle_pick_secret(_):
         file_picker.pick_files(
             dialog_title="Select client_secret.json",
+            file_type=ft.FilePickerFileType.CUSTOM,
             allowed_extensions=["json"],
-            allow_multiple=False
+            allow_multiple=False,
         )
 
     # ─── Setup Wizard View ───────────────────────────────────────────────────
@@ -420,7 +421,7 @@ async def main(page: ft.Page):
                 await asyncio.sleep(5)
             if chat_fetching_enabled and alerts_bot_enabled and yt_engine.is_connected and yt_engine.live_chat_id and alert_messages:
                 msg = alert_messages[idx % len(alert_messages)]
-                await asyncio.get_event_loop().run_in_executor(None, yt_engine.send_message, msg)
+                await asyncio.get_running_loop().run_in_executor(None, yt_engine.send_message, msg)
                 idx += 1
 
     async def engagement_bot_loop():
@@ -430,7 +431,7 @@ async def main(page: ft.Page):
                 await asyncio.sleep(5)
             if chat_fetching_enabled and engagement_bot_enabled and yt_engine.is_connected and yt_engine.live_chat_id and reminder_messages:
                 msg = reminder_messages[idx % len(reminder_messages)]
-                await asyncio.get_event_loop().run_in_executor(None, yt_engine.send_message, msg)
+                await asyncio.get_running_loop().run_in_executor(None, yt_engine.send_message, msg)
                 idx += 1
 
     async def sentiment_loop():

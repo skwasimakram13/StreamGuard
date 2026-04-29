@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=StreamGuard
-AppVersion=2.1.0
+AppVersion=2.1.1
 AppPublisher=StreamGuard Tools
 AppPublisherURL=https://github.com/skwasimakram13/StreamGuard
 AppSupportURL=https://github.com/skwasimakram13/StreamGuard/issues
@@ -12,13 +12,18 @@ AppUpdatesURL=https://github.com/skwasimakram13/StreamGuard/releases
 DefaultDirName={autopf}\StreamGuard
 DefaultGroupName=StreamGuard
 OutputDir=.\InnoSetupOutput
-OutputBaseFilename=StreamGuard_Setup_v2.1.0
+OutputBaseFilename=StreamGuard_Setup_v2.1.1
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayIcon={app}\StreamGuard.exe
 MinVersion=10.0
+; Always show destination directory and start menu group pages
+DisableDirPage=no
+DisableProgramGroupPage=no
+DisableWelcomePage=no
+LicenseFile=LICENSE
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
