@@ -103,8 +103,9 @@ async def main(page: ft.Page):
     # ─── Native File Dialog (Flet) ───────────────────────────────────────────
     file_picker = ft.FilePicker()
     page.overlay.append(file_picker)
+    page.update()
 
-    async def on_dialog_result(e: ft.FilePickerResultEvent):
+    async def on_dialog_result(e):
         if not e.files:
             return
         file_path = e.files[0].path
