@@ -12,7 +12,7 @@ permissions:
 jobs:
   build-windows:
     name: Build Windows App (flet build windows)
-    runs-on: windows-latest  # Has Visual Studio + C++ tools pre-installed
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Code
@@ -39,25 +39,44 @@ jobs:
       - name: Build Windows App (Native Flet)
         shell: pwsh
         env:
-          PYTHONUTF8: 1
+          PYTHONUTF8: "1"
+          FLET_CLI_NO_RICH_OUTPUT: "1"
         run: |
-          python build.py
+          $version = python -c "from version import __version__; print(__version__)"
+          flet build windows `
+            --project StreamGuard `
+            --product StreamGuard `
+            --org com.streamguard `
+            --build-version $version `
+            --yes
           if ($LASTEXITCODE -ne 0) {
-            Write-Host "Build failed!"
+            Write-Error "flet build windows failed!"
             exit 1
           }
 
-      - name: Verify Build Output
+      - name: Find and Verify Build Output
         shell: pwsh
         run: |
-          Write-Host "=== Build output structure ==="
-          Get-ChildItem -Path "build" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object FullName
-          $exePath = Get-ChildItem -Path "build\windows\runner\Release" -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          Write-Host "=== Searching entire workspace for StreamGuard.exe ==="
+          $allExes = Get-ChildItem -Path "." -Filter "StreamGuard.exe" -Recurse -ErrorAction SilentlyContinue
+          if ($allExes) {
+            foreach ($f in $allExes) { Write-Host "Found: $($f.FullName)" }
+          } else {
+            Write-Host "StreamGuard.exe NOT found — listing all .exe files:"
+            Get-ChildItem -Path "." -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+          }
+
+          Write-Host "=== Top-level build directory ==="
+          Get-ChildItem -Path "build" -Recurse -Depth 4 -ErrorAction SilentlyContinue | Select-Object FullName
+
+          $exePath = Get-ChildItem -Path "." -Filter "StreamGuard.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
           if (-not $exePath) {
-            Write-Error "No .exe found in build\windows\runner\Release — aborting."
+            Write-Error "StreamGuard.exe not found anywhere — build likely failed silently."
             exit 1
           }
-          Write-Host "Found exe: $($exePath.FullName)"
+          $releaseDir = $exePath.DirectoryName
+          Write-Host "Release directory: $releaseDir"
+          echo "RELEASE_DIR=$releaseDir" >> $env:GITHUB_ENV
 
       - name: Compile Inno Setup Installer
         shell: pwsh
