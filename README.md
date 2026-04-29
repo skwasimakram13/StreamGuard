@@ -100,7 +100,7 @@ StreamGuard is built on a **Bring Your Own Key (BYOK)**, zero-trust architecture
 ### Step 1 — Download & Install StreamGuard
 
 1. Navigate to the [**Releases page**](https://github.com/skwasimakram13/StreamGuard/releases/latest)
-2. Under **Assets**, download `StreamGuard_Setup_v2.1.3.exe`
+2. Under **Assets**, download `StreamGuard_Setup_v2.1.4.exe`
 3. Run the installer — Windows may show a SmartScreen prompt; click **More info → Run anyway** (the app is not yet code-signed)
 4. Accept the defaults and click **Next** through the setup wizard
 5. A **StreamGuard** shortcut will appear in your Start Menu (optional Desktop shortcut available)
@@ -308,7 +308,7 @@ flet build windows `
   --project StreamGuard `
   --product StreamGuard `
   --org com.streamguard `
-  --build-version 2.1.3 `
+  --build-version 2.1.4 `
   --yes
 
 # Step 2: The build output will be in:
@@ -318,7 +318,7 @@ flet build windows `
 iscc installer.iss
 
 # Step 4: The finished installer will be at:
-# InnoSetupOutput\StreamGuard_Setup_v2.1.3.exe
+# InnoSetupOutput\StreamGuard_Setup_v2.1.4.exe
 ```
 
 > 💡 The CI/CD pipeline automates this entire process. See [⚙️ CI/CD Pipeline](#️-cicd-pipeline) for details.
@@ -375,7 +375,7 @@ StreamGuard uses **GitHub Actions** for fully automated builds and releases. The
 
 | Event | Action |
 |---|---|
-| `git push` with a `v*.*.*` tag (e.g., `v2.1.3`) | Full build + GitHub Release created automatically |
+| `git push` with a `v*.*.*` tag (e.g., `v2.1.4`) | Full build + GitHub Release created automatically |
 | Manual `workflow_dispatch` trigger | Full build, installer uploaded as a build artifact (7-day retention) |
 
 ### Pipeline Steps
@@ -396,15 +396,15 @@ StreamGuard uses **GitHub Actions** for fully automated builds and releases. The
 
 ```bash
 # 1. Update the version number
-# Edit version.py: __version__ = "2.1.3"
-# Edit installer.iss: AppVersion=2.1.3, OutputBaseFilename=StreamGuard_Setup_v2.1.3
+# Edit version.py: __version__ = "2.1.4"
+# Edit installer.iss: AppVersion=2.1.4, OutputBaseFilename=StreamGuard_Setup_v2.1.4
 
 # 2. Update CHANGELOG.md with the new version section
 
 # 3. Commit, tag, and push
 git add -A
-git commit -m "chore: release v2.1.3"
-git tag v2.1.3
+git commit -m "chore: release v2.1.4"
+git tag v2.1.4
 git push origin main --tags
 # GitHub Actions will build and publish the release automatically
 ```

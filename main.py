@@ -123,6 +123,7 @@ async def main(page: ft.Page):
                 capture_output=True,
                 text=True,
                 timeout=120,
+                creationflags=subprocess.CREATE_NO_WINDOW,  # hide the PowerShell console window
             )
             return result.stdout.strip()
         except Exception as exc:

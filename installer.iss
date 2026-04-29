@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=StreamGuard
-AppVersion=2.1.3
+AppVersion=2.1.4
 AppPublisher=StreamGuard Tools
 AppPublisherURL=https://github.com/skwasimakram13/StreamGuard
 AppSupportURL=https://github.com/skwasimakram13/StreamGuard/issues
@@ -12,7 +12,7 @@ AppUpdatesURL=https://github.com/skwasimakram13/StreamGuard/releases
 DefaultDirName={autopf}\StreamGuard
 DefaultGroupName=StreamGuard
 OutputDir=.\InnoSetupOutput
-OutputBaseFilename=StreamGuard_Setup_v2.1.3
+OutputBaseFilename=StreamGuard_Setup_v2.1.4
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

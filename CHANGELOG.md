@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.4] - 2026-04-29
+
+### Fixed
+- **PowerShell terminal window visible when opening file picker**: `subprocess.run()` was spawning a visible PowerShell console alongside the native file dialog. Added `creationflags=subprocess.CREATE_NO_WINDOW` to the subprocess call so the PowerShell process runs completely hidden in the background — only the Windows `OpenFileDialog` is visible to the user.
+
+### Changed
+- `version.py`: `__version__` → `2.1.4`; `__version_info__` → `(2, 1, 4)`
+- `installer.iss`: `AppVersion` → `2.1.4`; `OutputBaseFilename` → `StreamGuard_Setup_v2.1.4`
+
+---
+
 ## [2.1.3] - 2026-04-29
 
 ### Fixed
@@ -171,7 +182,8 @@ First public release of StreamGuard — a free, privacy-first YouTube Live moder
 
 ---
 
-[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.3...HEAD
+[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.4...HEAD
+[2.1.4]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.0...v2.1.1

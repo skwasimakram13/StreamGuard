@@ -2,8 +2,8 @@
 Single source of truth for StreamGuard version information.
 """
 
-__version__ = "2.1.3"
-__version_info__ = (2, 1, 3)
+__version__ = "2.1.4"
+__version_info__ = (2, 1, 4)
 __app_name__ = "StreamGuard"
 __author__ = "StreamGuard Tools"
 __description__ = "Professional YouTube Live Stream Moderation & Bot Management"
