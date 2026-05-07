@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.5] - 2026-05-08
+
+### Added
+- **Hidden exit mechanism** — no close button is shown in the UI intentionally, but two invisible escape hatches allow the app to be quit in rare cases:
+  1. **`Ctrl + Q`** — keyboard shortcut works from anywhere in the app and shows a confirmation dialog before closing.
+  2. **Triple-click on the version label** (top-left corner, `v2.1.5`) — clicking it 3 times rapidly triggers the same confirmation dialog. Completely invisible to regular users.
+- Both methods show a modal `"Quit StreamGuard?"` confirmation dialog with **Cancel** and **Quit** actions before calling `page.window.destroy()`.
+
+### Changed
+- `version.py`: `__version__` → `2.1.5`; `__version_info__` → `(2, 1, 5)`
+- `installer.iss`: `AppVersion` → `2.1.5`; `OutputBaseFilename` → `StreamGuard_Setup_v2.1.5`
+
+---
+
 ## [2.1.4] - 2026-04-29
 
 ### Fixed
@@ -182,7 +196,8 @@ First public release of StreamGuard — a free, privacy-first YouTube Live moder
 
 ---
 
-[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.4...HEAD
+[Unreleased]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.5...HEAD
+[2.1.5]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/skwasimakram13/StreamGuard/compare/v2.1.1...v2.1.2

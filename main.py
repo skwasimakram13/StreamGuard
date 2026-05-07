@@ -405,6 +405,66 @@ async def main(page: ft.Page):
         dashboard_content
     ], expand=True)
 
+    # ─── Hidden Exit ──────────────────────────────────────────────────────────
+    # No quit button is shown in the UI intentionally.
+    # Two hidden escape hatches exist for rare cases:
+    #   1. Press  Ctrl + Q  anywhere in the app
+    #   2. Triple-click the version label (top-left corner, 3 rapid clicks)
+    # Both routes show a confirmation dialog before closing.
+
+    def _confirm_and_quit(e=None):
+        def _do_quit(_):
+            page.window.destroy()
+
+        def _cancel(_):
+            dlg.open = False
+            page.update()
+
+        dlg = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Quit StreamGuard?", weight=ft.FontWeight.BOLD),
+            content=ft.Text(
+                "This will stop all bots and close the app."
+                "\nAny active stream session will be disconnected.",
+                color=ft.Colors.GREY_400,
+            ),
+            actions=[
+                ft.TextButton("Cancel", on_click=_cancel),
+                ft.FilledButton(
+                    "Quit",
+                    style=ft.ButtonStyle(bgcolor=ft.Colors.RED_700),
+                    on_click=_do_quit,
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+
+    # 1. Keyboard shortcut: Ctrl+Q
+    async def _on_keyboard(e: ft.KeyboardEvent):
+        if e.ctrl and e.key.upper() == "Q":
+            _confirm_and_quit()
+
+    page.on_keyboard_event = _on_keyboard
+
+    # 2. Triple-click on version label (invisible affordance — no tooltip shown)
+    _version_click_count = [0]
+
+    def _on_version_click(_):
+        _version_click_count[0] += 1
+        if _version_click_count[0] >= 3:
+            _version_click_count[0] = 0
+            _confirm_and_quit()
+
+    version_label = ft.Text(
+        f"v{__version__}",
+        size=12,
+        color=ft.Colors.GREY_500,
+        on_click=_on_version_click,
+    )
+
     # ─── Shared Header ───────────────────────────────────────────────────────
     async def logout_clicked(_):
         yt_engine.logout()
@@ -416,7 +476,7 @@ async def main(page: ft.Page):
             ft.Row([
                 ft.Icon(icon=Icons.SHIELD, color=ft.Colors.BLUE_400, size=28),
                 ft.Text("StreamGuard", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
-                ft.Text(f"v{__version__}", size=12, color=ft.Colors.GREY_500),
+                version_label,  # triple-click = hidden quit
             ]),
             ft.Row([
                 status_dot, ft.Container(width=6), status_label, ft.Container(width=20),
